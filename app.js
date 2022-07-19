@@ -16,6 +16,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 //stackoverflow.com/questions/23259168/what-are-express-json-and-express-urlencoded
 
+// WHY ARE SAME TOKENS GENERATED
+
 // route middlewares
 app.use("/users", userRoutes);
 
