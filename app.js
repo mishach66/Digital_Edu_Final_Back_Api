@@ -1,10 +1,23 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import bodyParser from "body-parser";
+
+// routes
+import userRoutes from "./routes/user.js";
 
 dotenv.config();
 
 const app = express();
+
+// middlewares
+// general middlewares
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+//stackoverflow.com/questions/23259168/what-are-express-json-and-express-urlencoded
+
+// route middlewares
+app.use("/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
