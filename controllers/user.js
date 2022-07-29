@@ -9,8 +9,8 @@ export const register = async (req, res) => {
     email,
     password,
   } = req.body;
-  if (!reqFirstName || !reqLastName || !email || !password) {
-    res.status(422).json({ message: "fields are missing" });
+  if (false) {
+    return res.status(422).json({ message: "required fields are missing" });
   } else {
     // if email already exists?
     try {
@@ -28,24 +28,22 @@ export const register = async (req, res) => {
         "30m",
         "7d"
       );
-      res
+      return res
         .status(200)
         .json({ message: "Registered Succesfully!", token, refreshToken });
     } catch (error) {
       console.log("error", error);
-      res.status(500).json({ message: "Oops... Something went wrong" });
+      return res.status(500).json({ message: "Oops... Something went wrong" });
     }
   }
 };
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    res.status(422).json({ message: "fields are missing" });
-    return;
-  }
+
   const existingUser = await User.findOne({ email });
   if (existingUser) {
+    console.log("existing user");
     const {
       _id,
       firstName,
@@ -58,19 +56,53 @@ export const login = async (req, res) => {
     if (isPasswordValid) {
       const { token, refreshToken } = generateToken(
         { _id, firstName, lastName, role },
-        "30m",
+        "1d",
         "7d"
       );
-      res
+      console.log("line 67");
+      return res
         .status(200)
         .json({ message: "logged in successfully", token, refreshToken });
-      return;
     } else {
-      res.status(422).json({ message: "Password is invalid" });
-      return;
+      return res.status(422).json({ message: "Password Or Email is invalid" });
     }
   } else {
-    res.status(404).json({ message: "User not found" });
-    return;
+    return res.status(404).json({ message: "User not found" });
   }
+
+  //   try {
+  //     const existingUser = await User.findOne({ email });
+  //     if (existingUser) {
+  //       console.log("existing user");
+  //       const {
+  //         _id,
+  //         firstName,
+  //         lastName,
+  //         email,
+  //         password: hashedPassword,
+  //         role,
+  //       } = existingUser;
+  //       const isPasswordValid = await bcrypt.compare(password, hashedPassword);
+  //       if (isPasswordValid) {
+  //         const { token, refreshToken } = generateToken(
+  //           { _id, firstName, lastName, email, role },
+  //           "1d",
+  //           "7d"
+  //         );
+  //         return res
+  //           .status(200)
+  //           .json({ message: "logged in successfully", token, refreshToken });
+  //       } else {
+  //         throw new Error("password or email is invalid");
+  //         // return res
+  //         //   .status(422)
+  //         //   .json({ message: "Password Or Email is invalid" });
+  //       }
+  //     } else {
+  //       throw new Error("password or email is invalid");
+  //       // return res.status(404).json({ message: "User not found" });
+  //     }
+  //   } catch (error) {
+  //     return res.json({ error, name: "hi" });
+  //   }
 };

@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 
 // routes
 import userRoutes from "./routes/user.js";
+import productRoutes from "./routes/product.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // route middlewares
 app.use("/users", userRoutes);
+app.use("/products", productRoutes);
 
 const PORT = process.env.PORT || 5000;
 
