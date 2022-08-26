@@ -50,7 +50,6 @@ export const login = async (req, res) => {
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    console.log("existing user");
     const {
       _id,
       firstName,
@@ -66,7 +65,6 @@ export const login = async (req, res) => {
         "1d",
         "7d"
       );
-      console.log("line 67");
       return res
         .status(200)
         .json({ message: "logged in successfully", token, refreshToken });

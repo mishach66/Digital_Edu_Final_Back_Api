@@ -57,10 +57,10 @@ export const createProduct = async (req, res) => {
       releaseDate,
       specification,
     });
-    const categoryExists = await Category.find({
+    const categoryExists = await Category.findOne({
       name: category,
     });
-    if (!categoryExists.length) {
+    if (!categoryExists) {
       const newCategory = new Category({ name: category });
       await newCategory.save();
     }
@@ -98,7 +98,6 @@ export const deleteProduct = async (req, res) => {
     const productExists = await Product.exists({ _id });
     if (productExists) {
       await Product.findByIdAndRemove(_id);
-      // remove category if no product has it
 
       return res.status(200).json({ message: "Product deleted successfully" });
     } else {
