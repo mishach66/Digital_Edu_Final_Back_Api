@@ -14,6 +14,13 @@ export const register = async (req, res) => {
   } else {
     // if email already exists?
     try {
+      const emailExists = await User.find({
+        email,
+      });
+      if (emailExists.length) {
+        throw new Error("email already exists");
+      }
+
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = new User({
         firstName: reqFirstName,
@@ -33,7 +40,7 @@ export const register = async (req, res) => {
         .json({ message: "Registered Succesfully!", token, refreshToken });
     } catch (error) {
       console.log("error", error);
-      return res.status(500).json({ message: "Oops... Something went wrong" });
+      return res.status(500).json({ message: error.message });
     }
   }
 };
