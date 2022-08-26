@@ -58,10 +58,11 @@ export const createProduct = async (req, res) => {
       specification,
     });
     const categoryExists = await Category.find({
-      category: { $in: [`${category}`] },
+      name: category,
     });
-    if (!categoryExists) {
-      Category.push(category);
+    if (!categoryExists.length) {
+      const newCategory = new Category({ name: category });
+      await newCategory.save();
     }
     const savedProduct = await newProduct.save();
     return res
