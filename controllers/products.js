@@ -21,8 +21,12 @@ export const getAllProducts = async (req, res) => {
 
 export const getProductsByCategory = async (req, res) => {
   const { category } = req.params;
+  const { page = 0, size = 10 } = req.query;
   try {
-    const categoryProducts = await Product.find({ category });
+    const categoryProducts = await Product.find({ category })
+      .skip(page * size)
+      .limit(size);
+
     return res.status(200).json({
       message: `${category} products retrieved successfully`,
       products: categoryProducts,
@@ -78,12 +82,10 @@ export const updateProduct = async (req, res) => {
     const updatedProduct = await Product.findOneAndUpdate({ _id }, product, {
       new: true,
     });
-    return res
-      .status(200)
-      .json({
-        message: "Product updated successfully",
-        product: updatedProduct,
-      });
+    return res.status(200).json({
+      message: "Product updated successfully",
+      product: updatedProduct,
+    });
   } catch (error) {
     return res.status(400).json({ message: error });
   }

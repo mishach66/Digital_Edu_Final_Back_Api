@@ -15,7 +15,7 @@ router.get("/", getAllProducts);
 
 router.get("/category/:category", getProductsByCategory);
 
-router.post("/", authMiddleware, roleMiddleware, createProduct);
+router.post("/", createProduct);
 
 router.put("/:id", authMiddleware, roleMiddleware, updateProduct);
 
