@@ -5,9 +5,12 @@ export const productSchema = new mongoose.Schema({
   description: { type: String, required: true },
   category: { type: String, required: true },
   brand: { type: String, required: true },
-  price: { type: mongoose.Schema.Types.Decimal128, required: true },
+  price: { type: Number, required: true },
   releaseDate: { type: Date },
   specification: [{ name: String, value: String }],
+  // rating: [{ userId: mongoose.Schema.Types.ObjectId, rating: Number }],
+  averageRating: { type: Number, default: 1 },
+  ratings: [{ user: mongoose.Schema.Types.ObjectId, rating: Number }],
 });
 
 export const Product = mongoose.model("Product", productSchema);

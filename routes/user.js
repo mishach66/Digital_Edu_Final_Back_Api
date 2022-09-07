@@ -1,10 +1,23 @@
 import express from "express";
-import { login, register, addToCart } from "../controllers/user.js";
+import {
+  login,
+  register,
+  addToCart,
+  getUserInfo,
+  getUserCart,
+  refreshToken,
+} from "../controllers/user.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 router.get("/", (req, res) => {});
+
+router.get("/:id", getUserInfo);
+
+router.get("/:id/cart", getUserCart);
+
+router.post("/refresh", refreshToken);
 
 router.post("/register", register);
 

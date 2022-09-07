@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 // routes
 import userRoutes from "./routes/user.js";
@@ -15,6 +16,7 @@ const app = express();
 // general middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
 //stackoverflow.com/questions/23259168/what-are-express-json-and-express-urlencoded
 
 // WHY ARE SAME TOKENS GENERATED
