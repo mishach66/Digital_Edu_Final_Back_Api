@@ -1,6 +1,7 @@
 import { User } from "../models/user.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateToken.js";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   const {
@@ -68,7 +69,7 @@ export const login = async (req, res) => {
     if (isPasswordValid) {
       const { token, refreshToken } = generateToken(
         { _id, firstName, lastName, role },
-        "1d",
+        "1m",
         "7d"
       );
       return res.status(200).json({
@@ -146,13 +147,38 @@ export const getUserCart = async (req, res) => {
 
 export const refreshToken = async (req, res) => {
   const { refresh_token } = req.body;
+
+  try {
+    console.log("refresh token", refresh_token);
+    const user = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+    if (!!user) {
+      const { _id, role, firstName, lastName } = user;
+      const { token } = generateToken(
+        { _id, firstName, lastName, role },
+        "1m",
+        "7d"
+      );
+      res.json({ message: "token refreshed successfully", token });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "something went wrong" });
+  }
 };
 
 export const addToCart = async (req, res) => {
   const { id } = req.params;
   const { products } = req.body;
   try {
-    await User.findOneAndUpdate({ _id: id }, { cart: products });
+    await User.findOneAndUpdate(
+      { _id: id },
+      {
+        cart: products.map((product) => {
+          const quantity = product.quantity;
+          delete product.quantity;
+          return { product, quantity };
+        }),
+      }
+    );
     const updatedUser = await User.findOne({ _id: id });
     console.log("updated user", updatedUser);
     res.json({ message: "cart updated successfully", cart: updatedUser.cart });

@@ -118,11 +118,38 @@ export const rateProduct = async (req, res) => {
   const { productId, userId } = req.params;
   const { rating } = req.body;
   try {
-    const product = await Product.findById({ _id: productId });
-    // product.numberOfRatings += 1;
-    // product.averageRating =
-    //   (product.averageRating + rating) / product.numberOfRatings;
-  } catch (error) {}
+    const product = await Product.findById(productId);
+    const userRatings = product.rating;
+    const existingUserRating = userRatings.find((ur) => ur.userId === userId);
+
+    const finalRatings = [];
+
+    if (existingUserRating) {
+      // We need to check if the rating is different, if so, we need to allow it and remove previous one
+      if (existingUserRating.rating === rating) {
+        // We do not want to error out because it is technically not an error flow
+        return res.status(200).json({ message: "Already rated" });
+      } else {
+        // In case ratings were different, we remove previous record and let the code below this if statement update userRatings
+        const previousRatingIndex = userRatings.indexOf(existingUserRating);
+        userRatings.splice(previousRatingIndex, 1);
+      }
+    }
+
+    userRatings.push({ userId, rating });
+
+    const recalculatedAverage =
+      userRatings.reduce((a, b) => a.rating + b.rating, 0) / userRatings.length;
+
+    await Product.findOneAndUpdate(
+      { _id: productId },
+      { rating: userRatings, averageRating: recalculatedAverage }
+    );
+
+    return res.status(200).json({ message: "Successfully rated" });
+  } catch (error) {
+    res.status(500).json({ message: "something went wrong" });
+  }
 };
 
 export const deleteProduct = async (req, res) => {
