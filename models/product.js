@@ -9,7 +9,6 @@ export const productSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   releaseDate: { type: Date },
   specification: [{ name: String, value: String }],
-  // rating: [{ userId: mongoose.Schema.Types.ObjectId, rating: Number }],
   averageRating: { type: Number, default: 1 },
   ratings: [{ user: mongoose.Schema.Types.ObjectId, rating: Number }],
 });

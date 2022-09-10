@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema({
   lastName: { type: String, requeired: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  // cart: [{}],
   cart: [{ product: {}, quantity: Number }],
   role: { type: [String], default: ["user"] },
 });

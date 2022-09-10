@@ -9,7 +9,6 @@ export const authMiddleware = async (req, res, next) => {
   try {
     token = token.split(" ")[1];
     const user = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("user", user);
     req.user = user;
     next();
   } catch (error) {

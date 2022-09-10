@@ -3,7 +3,6 @@ import { Category } from "../models/category.js";
 import mongoose from "mongoose";
 export const queryProducts = async (req, res) => {
   const { name } = req.query;
-  // searching done
   try {
     const filtered = await Product.find({
       name: { $regex: name, $options: "i" },
@@ -25,7 +24,6 @@ export const getMainProducts = async (req, res) => {
       products: mainProducts,
       categories,
     });
-    // 10 yvelaze magali shefasebis mqone wamoige
   } catch (error) {
     console.log("error in getAllProducts", error);
     return res
@@ -38,7 +36,6 @@ export const getProductsByCategory = async (req, res) => {
   const { category } = req.params;
   const { page = 0, size = 10, sort = "" } = req.query;
   const [name, order] = sort.split(",");
-  console.log("sort obj", { name: order === "asc" ? -1 : 1 });
   try {
     let realPage = page - 1;
     const categoryProducts = await Product.find({ category })
@@ -46,12 +43,6 @@ export const getProductsByCategory = async (req, res) => {
       .skip(realPage * size)
       .limit(size);
     const allCategoryProducts = await Product.find({ category });
-    console.log(
-      "all category",
-      allCategoryProducts,
-      allCategoryProducts.length,
-      Math.ceil(allCategoryProducts.length / size)
-    );
     return res.status(200).json({
       message: `${category} products retrieved successfully`,
       products: categoryProducts,

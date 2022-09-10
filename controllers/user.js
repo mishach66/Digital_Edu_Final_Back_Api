@@ -11,10 +11,8 @@ export const register = async (req, res) => {
     password,
   } = req.body;
   if (false) {
-    // validate here
     return res.status(422).json({ message: "required fields are missing" });
   } else {
-    // if email already exists?
     try {
       const emailExists = await User.find({
         email,
@@ -111,7 +109,6 @@ export const refreshToken = async (req, res) => {
   const { refresh_token } = req.body;
 
   try {
-    console.log("refresh token", refresh_token);
     const user = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET);
     if (!!user) {
       const { _id, role, firstName, lastName } = user;
@@ -150,4 +147,3 @@ export const addToCart = async (req, res) => {
   }
 };
 
-export const review = async (req, res) => {};

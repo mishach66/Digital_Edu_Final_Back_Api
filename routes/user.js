@@ -11,8 +11,6 @@ import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {});
-
 router.get("/:id", getUserInfo);
 
 router.get("/:id/cart", getUserCart);
