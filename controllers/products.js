@@ -1,5 +1,18 @@
 import { Product } from "../models/product.js";
 import { Category } from "../models/category.js";
+import mongoose from "mongoose";
+export const queryProducts = async (req, res) => {
+  const { name } = req.query;
+  // searching done
+  try {
+    const filtered = await Product.find({
+      name: { $regex: name, $options: "i" },
+    });
+    res.status(200).json({ products: filtered });
+  } catch (err) {
+    res.status(500).json({ message: "something went wrong", err });
+  }
+};
 
 export const getMainProducts = async (req, res) => {
   try {
@@ -119,36 +132,35 @@ export const rateProduct = async (req, res) => {
   const { rating } = req.body;
   try {
     const product = await Product.findById(productId);
-    const userRatings = product.rating;
-    const existingUserRating = userRatings.find((ur) => ur.userId === userId);
-
+    console.log("line 122", product, rating);
+    const userRatings = product.ratings;
+    console.log("user ratings", userRatings);
+    const existingUserRating = userRatings?.find((ur) => {
+      return ur.user.toString() === userId;
+    });
+    console.log("existing ratings", existingUserRating);
     const finalRatings = [];
-
     if (existingUserRating) {
-      // We need to check if the rating is different, if so, we need to allow it and remove previous one
       if (existingUserRating.rating === rating) {
-        // We do not want to error out because it is technically not an error flow
         return res.status(200).json({ message: "Already rated" });
       } else {
-        // In case ratings were different, we remove previous record and let the code below this if statement update userRatings
         const previousRatingIndex = userRatings.indexOf(existingUserRating);
         userRatings.splice(previousRatingIndex, 1);
       }
     }
-
-    userRatings.push({ userId, rating });
-
+    const newRatings = [...userRatings, { user: userId, rating }];
     const recalculatedAverage =
-      userRatings.reduce((a, b) => a.rating + b.rating, 0) / userRatings.length;
-
+      newRatings.reduce((a, b) => {
+        return a + b.rating;
+      }, 0) / newRatings.length;
     await Product.findOneAndUpdate(
       { _id: productId },
-      { rating: userRatings, averageRating: recalculatedAverage }
+      { ratings: newRatings, averageRating: recalculatedAverage }
     );
 
     return res.status(200).json({ message: "Successfully rated" });
   } catch (error) {
-    res.status(500).json({ message: "something went wrong" });
+    res.status(500).json({ message: "something went wrong", error });
   }
 };
 

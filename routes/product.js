@@ -5,6 +5,7 @@ import {
   getMainProducts,
   getProductById,
   getProductsByCategory,
+  queryProducts,
   rateProduct,
   updateProduct,
 } from "../controllers/products.js";
@@ -14,6 +15,8 @@ import { roleMiddleware } from "../middlewares/role.middleware.js";
 const router = express.Router();
 
 router.get("/", getMainProducts);
+
+router.get("/search", queryProducts);
 
 router.get("/category/:category/:id", getProductById);
 

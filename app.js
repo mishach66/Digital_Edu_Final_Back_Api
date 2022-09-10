@@ -14,7 +14,7 @@ const app = express();
 
 // middlewares
 // general middlewares
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 //stackoverflow.com/questions/23259168/what-are-express-json-and-express-urlencoded

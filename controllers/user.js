@@ -30,8 +30,6 @@ export const register = async (req, res) => {
         email,
         password: hashedPassword,
       });
-      // demnamikava22@gmail.com
-      //1234567
       const savedUser = await newUser.save();
       const { _id, firstName, lastName, role } = newUser;
       const { token, refreshToken } = generateToken(
@@ -84,42 +82,6 @@ export const login = async (req, res) => {
   } else {
     return res.status(404).json({ message: "User not found" });
   }
-
-  //   try {
-  //     const existingUser = await User.findOne({ email });
-  //     if (existingUser) {
-  //       console.log("existing user");
-  //       const {
-  //         _id,
-  //         firstName,
-  //         lastName,
-  //         email,
-  //         password: hashedPassword,
-  //         role,
-  //       } = existingUser;
-  //       const isPasswordValid = await bcrypt.compare(password, hashedPassword);
-  //       if (isPasswordValid) {
-  //         const { token, refreshToken } = generateToken(
-  //           { _id, firstName, lastName, email, role },
-  //           "1d",
-  //           "7d"
-  //         );
-  //         return res
-  //           .status(200)
-  //           .json({ message: "logged in successfully", token, refreshToken });
-  //       } else {
-  //         throw new Error("password or email is invalid");
-  //         // return res
-  //         //   .status(422)
-  //         //   .json({ message: "Password Or Email is invalid" });
-  //       }
-  //     } else {
-  //       throw new Error("password or email is invalid");
-  //       // return res.status(404).json({ message: "User not found" });
-  //     }
-  //   } catch (error) {
-  //     return res.json({ error, name: "hi" });
-  //   }
 };
 
 export const getUserInfo = async (req, res) => {
@@ -175,7 +137,8 @@ export const addToCart = async (req, res) => {
         cart: products.map((product) => {
           const quantity = product.quantity;
           delete product.quantity;
-          return { product, quantity };
+          console.log("product", product);
+          return { ...product, quantity };
         }),
       }
     );
