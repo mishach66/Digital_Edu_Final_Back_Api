@@ -36,10 +36,13 @@ export const getMainProducts = async (req, res) => {
 
 export const getProductsByCategory = async (req, res) => {
   const { category } = req.params;
-  const { page = 0, size = 10 } = req.query;
+  const { page = 0, size = 10, sort = "" } = req.query;
+  const [name, order] = sort.split(",");
+  console.log("sort obj", { name: order === "asc" ? -1 : 1 });
   try {
     let realPage = page - 1;
     const categoryProducts = await Product.find({ category })
+      .sort({ [name]: order === "asc" ? 1 : -1 })
       .skip(realPage * size)
       .limit(size);
     const allCategoryProducts = await Product.find({ category });
