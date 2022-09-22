@@ -74,6 +74,7 @@ export const createProduct = async (req, res) => {
     price,
     releaseDate,
     specification,
+    image,
   } = req.body;
   try {
     const newProduct = new Product({
@@ -84,6 +85,7 @@ export const createProduct = async (req, res) => {
       price,
       releaseDate,
       specification,
+      image,
     });
     const categoryExists = await Category.findOne({
       name: category,
