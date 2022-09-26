@@ -75,7 +75,7 @@ export const createProduct = async (req, res) => {
     releaseDate,
     specification,
     image,
-  } = req.body;
+  } = req.body.product;
   try {
     const newProduct = new Product({
       name,

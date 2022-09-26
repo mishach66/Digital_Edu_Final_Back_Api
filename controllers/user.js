@@ -120,7 +120,8 @@ export const refreshToken = async (req, res) => {
       res.json({ message: "token refreshed successfully", token });
     }
   } catch (err) {
-    res.status(500).json({ message: "something went wrong" });
+    console.log("eror", err);
+    res.status(500).json({ message: "something went wrong", err });
   }
 };
 
@@ -146,4 +147,3 @@ export const addToCart = async (req, res) => {
     res.status(400).json({ message: "something went wrong" });
   }
 };
-
