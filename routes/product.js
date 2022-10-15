@@ -20,7 +20,7 @@ router.get("/search", queryProducts);
 
 router.get("/category/:category/:id", getProductById);
 
-router.get("/category/:category", getProductsByCategory);
+router.get("/categories/:category", getProductsByCategory);
 
 router.post("/", authMiddleware, roleMiddleware, createProduct);
 
