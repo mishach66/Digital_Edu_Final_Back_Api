@@ -25,7 +25,6 @@ export const getMainProducts = async (req, res) => {
       categories,
     });
   } catch (error) {
-    console.log("error in getAllProducts", error);
     return res
       .status(500)
       .json({ message: "Internal server error", products: [] });
@@ -50,7 +49,6 @@ export const getProductsByCategory = async (req, res) => {
       totalPages: Math.ceil(allCategoryProducts.length / size),
     });
   } catch (error) {
-    console.log("error", error);
     res.status(500).json({ message: "Something went wrong", products: [] });
   }
 };
@@ -99,7 +97,6 @@ export const createProduct = async (req, res) => {
       .status(201)
       .json({ message: "Product saved successfully", product: savedProduct });
   } catch (error) {
-    console.log("error", error);
     return res.status(400).json({ message: "Bad request", error });
   }
 };
@@ -107,13 +104,10 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   const { id: _id } = req.params;
   const { product } = req.body;
-  console.log("product before update", product);
   try {
-    console.log("product from body", product);
     const updatedProduct = await Product.findOneAndUpdate({ _id }, product, {
       new: true,
     });
-    console.log("updated product", updatedProduct);
     return res.status(200).json({
       message: "Product updated successfully",
       product: updatedProduct,
@@ -128,13 +122,10 @@ export const rateProduct = async (req, res) => {
   const { rating } = req.body;
   try {
     const product = await Product.findById(productId);
-    console.log("line 122", product, rating);
     const userRatings = product.ratings;
-    console.log("user ratings", userRatings);
     const existingUserRating = userRatings?.find((ur) => {
       return ur.user.toString() === userId;
     });
-    console.log("existing ratings", existingUserRating);
     const finalRatings = [];
     if (existingUserRating) {
       if (existingUserRating.rating === rating) {

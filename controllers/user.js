@@ -42,7 +42,6 @@ export const register = async (req, res) => {
         user: savedUser,
       });
     } catch (error) {
-      console.log("error", error);
       return res.status(500).json({ message: error.message });
     }
   }
@@ -120,7 +119,6 @@ export const refreshToken = async (req, res) => {
       res.json({ message: "token refreshed successfully", token });
     }
   } catch (err) {
-    console.log("eror", err);
     res.status(500).json({ message: "something went wrong", err });
   }
 };
@@ -135,13 +133,11 @@ export const addToCart = async (req, res) => {
         cart: products.map((product) => {
           const quantity = product.quantity;
           delete product.quantity;
-          console.log("product", product);
           return { ...product, quantity };
         }),
       }
     );
     const updatedUser = await User.findOne({ _id: id });
-    console.log("updated user", updatedUser);
     res.json({ message: "cart updated successfully", cart: updatedUser.cart });
   } catch (error) {
     res.status(400).json({ message: "something went wrong" });
