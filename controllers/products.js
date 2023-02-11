@@ -49,6 +49,7 @@ export const getProductsByCategory = async (req, res) => {
       totalPages: Math.ceil(allCategoryProducts.length / size),
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Something went wrong", products: [] });
   }
 };
@@ -104,10 +105,22 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   const { id: _id } = req.params;
   const { product } = req.body;
+  const { category } = product;
   try {
+    const categoryExists = await Category.findOne({
+      name: category,
+    });
+    if (!categoryExists) {
+      const newCategory = new Category({ name: category });
+      await newCategory.save();
+    }
     const updatedProduct = await Product.findOneAndUpdate({ _id }, product, {
       new: true,
     });
+    // const categoryProducts = await Product.find({ category });
+    // if (categoryProducts.length === 0) {
+    //   await Product.findOneAndDelete({ name: category });
+    // }
     return res.status(200).json({
       message: "Product updated successfully",
       product: updatedProduct,
