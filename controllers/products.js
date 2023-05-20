@@ -139,23 +139,18 @@ export const rateProduct = async (req, res) => {
     const existingUserRating = userRatings?.find((ur) => {
       return ur.user.toString() === userId;
     });
-    const finalRatings = [];
     if (existingUserRating) {
-      if (existingUserRating.rating === rating) {
-        return res.status(200).json({ message: "Already rated" });
-      } else {
-        const previousRatingIndex = userRatings.indexOf(existingUserRating);
-        userRatings.splice(previousRatingIndex, 1);
-      }
+      existingUserRating.rating = rating;
+    } else {
+      userRatings.push({ user: userId, rating });
     }
-    const newRatings = [...userRatings, { user: userId, rating }];
     const recalculatedAverage =
-      newRatings.reduce((a, b) => {
+      userRatings.reduce((a, b) => {
         return a + b.rating;
-      }, 0) / newRatings.length;
+      }, 0) / userRatings.length;
     await Product.findOneAndUpdate(
       { _id: productId },
-      { ratings: newRatings, averageRating: recalculatedAverage }
+      { ratings: userRatings, averageRating: recalculatedAverage }
     );
 
     return res.status(200).json({ message: "Successfully rated" });
