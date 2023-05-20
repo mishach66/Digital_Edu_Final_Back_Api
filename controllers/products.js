@@ -1,6 +1,6 @@
 import { Product } from "../models/product.js";
 import { Category } from "../models/category.js";
-import mongoose from "mongoose";
+
 export const queryProducts = async (req, res) => {
   const { name } = req.query;
   try {
@@ -74,7 +74,7 @@ export const createProduct = async (req, res) => {
     releaseDate,
     specification,
     image,
-  } = req.body.product;
+  } = req.body.product || {};
   try {
     const newProduct = new Product({
       name,

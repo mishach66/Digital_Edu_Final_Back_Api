@@ -10,40 +10,37 @@ export const register = async (req, res) => {
     email,
     password,
   } = req.body;
-  if (false) {
-    return res.status(422).json({ message: "required fields are missing" });
-  } else {
-    try {
-      const emailExists = await User.find({
-        email,
-      });
-      if (emailExists.length) {
-        throw new Error("email already exists");
-      }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = new User({
-        firstName: reqFirstName,
-        lastName: reqLastName,
-        email,
-        password: hashedPassword,
-      });
-      const savedUser = await newUser.save();
-      const { _id, firstName, lastName, role } = newUser;
-      const { token, refreshToken } = generateToken(
-        { _id, firstName, lastName, role },
-        "1m",
-        "7d"
-      );
-      return res.status(200).json({
-        message: "Registered Succesfully!",
-        token,
-        refreshToken,
-        user: savedUser,
-      });
-    } catch (error) {
-      return res.status(500).json({ message: error.message });
+  try {
+    const emailExists = await User.find({
+      email,
+    });
+    if (emailExists.length) {
+      throw new Error("email already exists");
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      firstName: reqFirstName,
+      lastName: reqLastName,
+      email,
+      password: hashedPassword,
+    });
+    const savedUser = await newUser.save();
+    const { _id, firstName, lastName, role } = newUser;
+    const { token, refreshToken } = generateToken(
+      { _id, firstName, lastName, role },
+      "1m",
+      "7d"
+    );
+    return res.status(200).json({
+      message: "Registered Succesfully!",
+      token,
+      refreshToken,
+      user: savedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 };
 
