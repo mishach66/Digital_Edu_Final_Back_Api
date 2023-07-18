@@ -9,25 +9,36 @@ export const queryProducts = async (req, res) => {
     });
     res.status(200).json({ products: filtered });
   } catch (err) {
-    res.status(500).json({ message: "something went wrong", err });
+    res.status(500).json({ message: "Error searching for products", err });
   }
 };
 
 export const getMainProducts = async (req, res) => {
+  const { page = 0, size = 10, sort = "name,desc" } = req.query;
+  const [name, order] = sort.split(",");
   try {
-    const mainProducts = await Product.find({})
-      .sort({ averageRating: "desc" })
-      .limit(10);
+    let realPage = page - 1;
+    const mainProducts = await Product.find({});
+    // .sort({
+    //   [name]: order === "asc" ? 1 : -1,
+    // })
+    // .skip(realPage * size)
+    // .limit(size);
     const categories = await Category.find({});
+    const allProducts = await Product.find({});
     return res.status(200).json({
       message: "Products retrieved successfully",
       products: mainProducts,
+      // page: realPage,
       categories,
+      // totalPages: Math.ceil(allProducts.length / size),
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Internal server error", products: [] });
+    return res.status(500).json({
+      message: "error getting home page products",
+      products: [],
+      error,
+    });
   }
 };
 
@@ -50,7 +61,11 @@ export const getProductsByCategory = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Something went wrong", products: [] });
+    res.status(500).json({
+      message: "error getting category products",
+      products: [],
+      error,
+    });
   }
 };
 
@@ -60,7 +75,7 @@ export const getProductById = async (req, res) => {
     const product = await Product.findById({ _id: id });
     return res.json({ message: "product retrieved successfully", product });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(404).json({ message: "error getting single product", error });
   }
 };
 
@@ -126,38 +141,38 @@ export const updateProduct = async (req, res) => {
       product: updatedProduct,
     });
   } catch (error) {
-    return res.status(400).json({ message: error });
+    return res.status(400).json({ message: "error updating product", error });
   }
 };
 
-export const rateProduct = async (req, res) => {
-  const { productId, userId } = req.params;
-  const { rating } = req.body;
-  try {
-    const product = await Product.findById(productId);
-    const userRatings = product.ratings;
-    const existingUserRating = userRatings?.find((ur) => {
-      return ur.user.toString() === userId;
-    });
-    if (existingUserRating) {
-      existingUserRating.rating = rating;
-    } else {
-      userRatings.push({ user: userId, rating });
-    }
-    const recalculatedAverage =
-      userRatings.reduce((a, b) => {
-        return a + b.rating;
-      }, 0) / userRatings.length;
-    await Product.findOneAndUpdate(
-      { _id: productId },
-      { ratings: userRatings, averageRating: recalculatedAverage }
-    );
+// export const rateProduct = async (req, res) => {
+//   const { productId, userId } = req.params;
+//   const { rating } = req.body;
+//   try {
+//     const product = await Product.findById(productId);
+//     const userRatings = product.ratings;
+//     const existingUserRating = userRatings?.find((ur) => {
+//       return ur.user.toString() === userId;
+//     });
+//     if (existingUserRating) {
+//       existingUserRating.rating = rating;
+//     } else {
+//       userRatings.push({ user: userId, rating });
+//     }
+//     const recalculatedAverage =
+//       userRatings.reduce((a, b) => {
+//         return a + b.rating;
+//       }, 0) / userRatings.length;
+//     await Product.findOneAndUpdate(
+//       { _id: productId },
+//       { ratings: userRatings, averageRating: recalculatedAverage }
+//     );
 
-    return res.status(200).json({ message: "Successfully rated" });
-  } catch (error) {
-    res.status(500).json({ message: "something went wrong", error });
-  }
-};
+//     return res.status(200).json({ message: "Successfully rated" });
+//   } catch (error) {
+//     res.status(500).json({ message: "something went wrong", error });
+//   }
+// };
 
 export const deleteProduct = async (req, res) => {
   const { id: _id } = req.params;
@@ -173,6 +188,6 @@ export const deleteProduct = async (req, res) => {
         .json({ message: `Product with id of ${_id} does not exists` });
     }
   } catch (error) {
-    return res.status(500).json({ error });
+    return res.status(500).json({ message: "error deleting product", error });
   }
 };

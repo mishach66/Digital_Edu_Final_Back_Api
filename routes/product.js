@@ -6,7 +6,7 @@ import {
   getProductById,
   getProductsByCategory,
   queryProducts,
-  rateProduct,
+  // rateProduct,
   updateProduct,
 } from "../controllers/products.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
@@ -24,7 +24,7 @@ router.get("/categories/:category", getProductsByCategory);
 
 router.post("/", authMiddleware, roleMiddleware, createProduct);
 
-router.post("/:productId/users/:userId/rate", authMiddleware, rateProduct);
+// router.post("/:productId/users/:userId/rate", authMiddleware, rateProduct);
 
 router.put("/:id", authMiddleware, roleMiddleware, updateProduct);
 

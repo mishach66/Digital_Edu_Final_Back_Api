@@ -97,7 +97,7 @@ export const getUserCart = async (req, res) => {
       cart: user.cart,
     });
   } catch (error) {
-    res.json({ message: "something went wrong" });
+    res.json({ message: "error retrieving user cart", error });
   }
 };
 
@@ -116,7 +116,7 @@ export const refreshToken = async (req, res) => {
       res.json({ message: "token refreshed successfully", token });
     }
   } catch (err) {
-    res.status(500).json({ message: "something went wrong", err });
+    res.status(500).json({ message: "error refreshing token", err });
   }
 };
 
@@ -137,6 +137,6 @@ export const addToCart = async (req, res) => {
     const updatedUser = await User.findOne({ _id: id });
     res.json({ message: "cart updated successfully", cart: updatedUser.cart });
   } catch (error) {
-    res.status(400).json({ message: "something went wrong" });
+    res.status(400).json({ message: "error updating cart" });
   }
 };
