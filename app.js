@@ -26,16 +26,35 @@ app.use("/products", productRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-(async () => {
+// ------------- ============   Cloud Mongo DB   ============ -------------
+// (async () => {
+//   try {
+//     await mongoose.connect(process.env.MONGOOSE_URL, {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true,
+//     });
+//     app.listen(PORT, () => {
+//       console.log(`server running on PORT=${PORT}`);
+//     });
+//   } catch (err) {
+//     console.log("error while starting", err);
+//   }
+// })();
+// ------------- ============   Cloud Mongo DB   ============ -------------
+
+
+// ------------- ============   Local Mongo DB   ============ -------------
+const DB_NAME = process.env.DB_NAME
+
+async function start() {
   try {
-    await mongoose.connect(process.env.MONGOOSE_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    app.listen(PORT, () => {
-      console.log(`server running on PORT=${PORT}`);
-    });
-  } catch (err) {
-    console.log("error while starting", err);
+      await mongoose.connect(
+          `mongodb://127.0.0.1:27017/${DB_NAME}`,
+      )
+      app.listen(PORT, () => console.log(`Server started on port: ${PORT}`))
+  } catch (error) {
+      console.log(error)
   }
-})();
+}
+start()
+// ------------- ============   Local Mongo DB   ============ -------------
